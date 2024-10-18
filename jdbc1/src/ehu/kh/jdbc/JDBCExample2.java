@@ -28,6 +28,8 @@ public class JDBCExample2 {
 		// 2-3) DB 연결 정보와 DriverManager를 이용해서 Connection 객체 생성
 		
 		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			
 			String type = "jdbc:oracle:thin:@";
 			
 			String host = "localhost";

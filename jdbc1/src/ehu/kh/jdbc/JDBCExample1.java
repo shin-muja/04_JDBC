@@ -48,7 +48,7 @@ public class JDBCExample1 {
 			/* 2. Driver Manager 객체를 이요해서 Connection 객체 생성하기 */
 			
 			// java.sql.DriverManager
-			// - DB 연결 정보와 JDBC 드라이버를 이요해서
+			// - DB 연결 정보와 JDBC 드라이버를 이용해서
 			//   원하는 DB와 연결할 수 있는 Connection 객체를 생성하는 객체
 			
 			// 2-1 ) Oracle JDBC Driver 객체를 메모리에 로드(적재) 하기
