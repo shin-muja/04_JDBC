@@ -66,7 +66,7 @@ public class JDBCExample7 {
 			
 			String sql = """
 					SELECT EMP_ID, EMP_NAME, SALARY, DECODE(SUBSTR(EMP_NO, 8, 1), '1', 'M', '2', 'F') GENDER,
-					JOB_NAME, NVL(DEPT_TITLE, '없음') DEPT
+					JOB_NAME, DEPT_TITLE
 					FROM EMPLOYEE E
 					LEFT JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE)
 					LEFT JOIN DEPARTMENT D ON (DEPT_CODE = DEPT_ID)
@@ -96,7 +96,7 @@ public class JDBCExample7 {
 				String sGender = rs.getString("GENDER");
 				int salary = rs.getInt("SALARY");
 				String jobName = rs.getString("JOB_NAME");
-				String dept = rs.getString("DEPT");
+				String dept = rs.getString("DEPT_TITLE");
 				
 
 				System.out.printf("%-4s | %3s | %-4s | %7d | %-3s  | %s \n",

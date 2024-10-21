@@ -2,3 +2,6 @@ PreparedStatement의 인수를 위치 홀더 플레이스 홀더
 
 Statement, PreparedStatement 둘다 SQLException 발생 try catch문 필수
 메모리 반환을 위한 Servlet과 마찬가지로 Connection 닫기 필수
+
+getInt로 받는 값이 NULL값일시 오류를 막기위한 0으로 온다
+String같은 객체 클래스는 그냥 넘어와도 상관없기에 Null 표기된다

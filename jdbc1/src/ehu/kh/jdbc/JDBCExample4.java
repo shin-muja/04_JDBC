@@ -41,6 +41,7 @@ public class JDBCExample4 {
 					"WHERE DEPT_TITLE = '" + input + "' "
 					+ "ORDER BY E.JOB_CODE"; 
 			
+			
 			rs = conn.createStatement().executeQuery(sql);
 			
 			boolean flag = true;
