@@ -195,81 +195,181 @@ public class UserDAO {
 
 	public List<User> selectName(Connection conn, String input) throws Exception {
 		
-		String sql = """
-				SELECT USER_NO, USER_ID, USER_PW, USER_NAME,
-				TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일') ENROLL_DATE
-				FROM TB_USER
-				WHERE USER_NAME LIKE ?
-				ORDER BY 1
-				""";
-		
 		List<User> userList = new ArrayList<User>();
 		
-		pstmt = conn.prepareStatement(sql);
-		
-		pstmt.setString(1, "%" + input + "%");
-		
-		rs = pstmt.executeQuery();
-		
-		while(rs.next()) {
-			User user =
-					new User(rs.getInt("USER_NO"), rs.getString("USER_ID"),
-					rs.getString("USER_PW"), rs.getString("USER_NAME"),
-					rs.getString("ENROLL_DATE"));
+		try {
+			String sql = """
+					SELECT USER_NO, USER_ID, USER_PW, USER_NAME,
+					TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일') ENROLL_DATE
+					FROM TB_USER
+					WHERE USER_NAME LIKE ?
+					ORDER BY 1
+					""";
 			
-			userList.add(user);
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, "%" + input + "%");
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				User user =
+						new User(rs.getInt("USER_NO"), rs.getString("USER_ID"),
+						rs.getString("USER_PW"), rs.getString("USER_NAME"),
+						rs.getString("ENROLL_DATE"));
+				
+				userList.add(user);
+			}
+		} finally {
+			
+			close(rs);
+			close(pstmt);
 		}
-		
-		close(rs);
-		close(pstmt);
 		
 		return userList;
 	}
 
 	public User selectUser(Connection conn, int input) throws Exception {
+		User user = null;
 		
-		String sql = """
-				SELECT USER_NO, USER_ID, USER_PW, USER_NAME,
-				TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일') ENROLL_DATE
-				FROM TB_USER
-				WHERE USER_NO = ?
-				""";
-		
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, input);
-		
-		rs = pstmt.executeQuery();
-		
-		if( rs.next() ) {
+		try {
+			String sql = """
+					SELECT USER_NO, USER_ID, USER_PW, USER_NAME,
+					TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일') ENROLL_DATE
+					FROM TB_USER
+					WHERE USER_NO = ?
+					""";
 			
-			return	new User(rs.getInt("USER_NO"), rs.getString("USER_ID"),
-					rs.getString("USER_PW"), rs.getString("USER_NAME"),
-					rs.getString("ENROLL_DATE"));
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, input);
+			
+			rs = pstmt.executeQuery();
 			
 			
+			if( rs.next() ) {
+				
+				user = new User(rs.getInt("USER_NO"), rs.getString("USER_ID"),
+						rs.getString("USER_PW"), rs.getString("USER_NAME"),
+						rs.getString("ENROLL_DATE"));
+				
+			}
+		} finally {
+			
+			close(rs);
+			close(pstmt);
 		}
 		
-		close(rs);
-		close(pstmt);
-		
-		return null;
+		return user;
 	}
 
 	public int deleteUser(Connection conn, int input) throws Exception {
 		
-		String sql = """
-				DELETE FROM TB_USER
-				WHERE USER_NO = ?
-				""";
+		int result = 0;
 		
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, input);
+		try {
+			String sql = """
+					DELETE FROM TB_USER
+					WHERE USER_NO = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, input);
+			
+			result = pstmt.executeUpdate();
+			
+		} finally {
 		
-		int result = pstmt.executeUpdate();
-		
-		close(pstmt);
+			close(pstmt);
+		}
 		
 		return result;
+	}
+
+	public int selUpdateName(Connection conn, String inputId, String inputPw) throws Exception {
+		
+		int result = 0;
+		
+		try {
+			String sql = """
+					SELECT USER_NO FROM TB_USER
+					WHERE USER_ID = ? AND USER_PW = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, inputId);
+			pstmt.setString(2, inputPw);
+			
+			rs = pstmt.executeQuery();
+			
+			
+			if( rs.next()) {
+				result = rs.getInt("USER_NO");
+			}
+		} finally {
+		
+			close(rs);
+			close(pstmt);
+		
+		}
+		
+		return result;
+	}
+
+	public boolean updateName(Connection conn, String name, int userNo) throws Exception{
+		
+		int result = 0;
+		
+		try {
+			String sql = """
+					UPDATE TB_USER SET USER_NO = ?
+					WHERE USER_ID = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, name);
+			pstmt.setInt(2, userNo);
+			
+			result = pstmt.executeUpdate();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result > 0 ? true : false;
+	}
+
+	/** 아이디 중복 화인 DAO
+	 * @param conn
+	 * @param userId
+	 * @return
+	 */
+	public int idCheck(Connection conn, String userId) throws Exception {
+		
+		int count = 0;
+		
+		try {
+			
+			String sql = """
+					SELECT COUNT(*) COUNT FROM TB_USER WHERE USER_ID = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			if( rs.next() ) count = rs.getInt(1); // 조회된 컬럼 순서를 이용해
+												// 컬럼값 얻어오기
+			
+		} finally {
+			close(rs);
+			close(pstmt);
+		}
+		
+		return count;
 	}
 
 	

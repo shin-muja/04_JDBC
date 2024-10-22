@@ -87,6 +87,10 @@ public class UserService {
 		return userList;
 	}
 
+	/** 3. User 중 이름에 검색어가 포함된 회원 조회 서비스
+	 * @param input : 입력한 키워드
+	 * @return userList : 조회된 회원 리스트
+	 */
 	public List<User> selectName(String input) throws Exception {
 		
 		Connection conn = getConnection();
@@ -115,6 +119,7 @@ public class UserService {
 		
 		int result = dao.deleteUser(conn, input);
 		
+		// 결과에 따라 트랜잭션 제어 처리
 		if( result > 0 ) commit(conn);
 		else rollback(conn);
 		
@@ -122,23 +127,86 @@ public class UserService {
 		
 		return result;
 	}
+
+	
+	public int selUpdateName(String inputId, String inputPw) throws Exception{
+		
+		Connection conn = getConnection();
+		
+		int result = dao.selUpdateName(conn, inputId, inputPw);
+		
+		close(conn);
+		
+		return result;
+	}
+	
+	public boolean updateName(String name, int userNo) throws Exception {
+		
+		Connection conn = getConnection();
+		
+		boolean result = dao.updateName(conn, name, userNo);
+		
+		if( result ) {
+			commit(conn);
+		} else {
+			rollback(conn);
+		}
+		
+		close(conn);
+		
+		return result;
+	}
+
+	/** 아디디 중복 화인 서비스
+	 * @param userId
+	 * @return count
+	 */
+	public int idCheck(String userId) throws Exception {
+		
+		Connection conn = getConnection();
+		
+		int count = dao.idCheck(conn, userId);
+		
+		close(conn);
+		
+		return count;
+	}
+
+	/** userList에 있는 모든 user INSERT 서비스
+	 * @param userList
+	 * @return result : 삽입된 행의 개수
+	 * @throws Exception
+	 */
+	public int multiInsertUser(List<User> userList) throws Exception {
+
+		Connection conn = getConnection();
+		
+		// 다중 INSERT 방법
+		// 1) SQL을 이용한 다중 INSERT
+		// 2) Java 반복문을 이용한 다중 INSERT(이거 사용)
+		
+		// 데이터 가공
+		int count = 0; // 삽입 성공한 행의 개수 count
+		
+		// 1행씩 삽입
+		for(User user :  userList ) {
+			count += dao.insertUser(conn, user);
+			
+			/*
+			 * int result = dao.inserUser(conn, user);
+			 * count += result; // 삽입 성공한 행의 개수를 count에 누적
+			 */
+			
+		}
+		
+		// TCL
+		// 전체 삽입 성공 시 commit / 아니면 rollback( 일부 삽입, 전체 실패)
+		
+		if( count == userList.size() ) commit(conn);
+		else							rollback(conn);
+		
+		close(conn);		
+		
+		return count;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
