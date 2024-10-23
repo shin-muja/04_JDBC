@@ -7,8 +7,13 @@ public class test {
 	public static void main(String[] arsg) {
 		
 		
+		String str2 = "aabcc";
+		String str1 = "abc";
 		
-		System.out.println("\!\@#$%^&*(\\'\"<>?:;");
+		if(str2.contains(str1)) System.out.println("ehl");
+		
+		
+		
 		
 	}
 }
