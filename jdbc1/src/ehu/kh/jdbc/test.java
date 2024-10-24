@@ -7,10 +7,15 @@ public class test {
 	public static void main(String[] arsg) {
 		
 		
-		String str2 = "aabcc";
-		String str1 = "abc";
+		int a = 9;
+		int b = 91;
 		
-		if(str2.contains(str1)) System.out.println("ehl");
+		String ab = "" + a + b;
+		String ba = "" + b + a;
+		
+		
+		
+		System.out.println(ba);
 		
 		
 		

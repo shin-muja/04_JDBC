@@ -9,7 +9,7 @@
 			TODO_NO,
 			TODO_TITLE,
 			TODO_COMPLETE,
-			TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI;SS') REG_DATE
+			TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI:SS') REG_DATE
 		FROM TB_TODO
 		WHERE TODO_NO > 0
 		ORDER BY TODO_NO ASC
@@ -27,4 +27,48 @@
 		INSERT INTO TB_TODO
 		VALUES(SEQ_TODO_NO.NEXTVAL, ?, ?, DEFAULT, DEFAULT)
 	</entry>
+	
+	<!-- 할 일 상세 조회 -->
+	<entry key="todoDetailView">
+		SELECT
+			TODO_NO,
+			TODO_TITLE,
+			TODO_DETAIL,
+			TODO_COMPLETE,
+			TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI:SS') REG_DATE
+		FROM TB_TODO
+		WHERE TODO_NO = ?
+	</entry>
+	
+	<!-- 완료 여부 변경
+		TODO_COMPLETE 값이 0 일 때 1로 변경,
+		그외의 값(1일 때) 은 0으로 변경
+		
+		TODO_COMPLERE에는 CHECK 제약 조건이 있기에
+		0 또는 1만 기입 가능
+		DECODE(TODO_COMPLETE, 0, 1, 0) == 
+		DECODE(TODO_COMPLETE, 0, 1, 1, 0)
+		동작은 똑같이 동작함
+	 -->
+	<entry key="todoComplete">
+		UPDATE TB_TODO
+		SET TODO_COMPLETE = DECODE(TODO_COMPLETE, 0, 1, 0)
+		WHERE TODO_NO = ?
+	</entry>
+	
+	<!-- 할 일 수정 UPDATE -->
+	<entry key="todoUpdate">
+		UPDATE TB_TODO
+		SET
+		TODO_TITLE = ?,
+		TODO_DETAIL = ?
+		WHERE TODO_NO = ?
+	</entry>
+
+	<entry key="todoDelete">
+		DELETE FROM TB_TODO
+		WHERE TODO_NO = ?
+	</entry>
+
+
 </properties>
